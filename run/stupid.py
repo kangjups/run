@@ -4,79 +4,75 @@ Created on Thu Aug 25 19:06:18 2022
 
 @author: angel
 """
+
 import pygame
 import random
 
-class wallc:
-    def __init__(self,img,walls):
-        self.img =  pygame.image.load(img)
-        self.walls = walls
-    def wall_make(self):
-        self.walls.append([0,0])
-def wallss(wal,walls):
-    #벽 4
-    if wal == 1:
+class make_wal:
+    def __init__(self):
+        pass
+    def stage(self,wal,walls,stage_choice):
         
-        walls.append([800,100])
-        walls.append([800,200])
-        walls.append([800,300])
-        walls.append([800,400])
-    
-    if wal == 2:
-        walls.append([800,0])
-        
-        walls.append([800,200])
-        walls.append([800,300])
-        walls.append([800,400])
-
-    if wal == 3:
-        walls.append([800,0])
-        walls.append([800,100])
-   
-        walls.append([800,300])
-        walls.append([800,400])
-    
-    if wal == 4:
-        walls.append([800,0])
-        walls.append([800,100])
-        walls.append([800,200])
-   
-        walls.append([800,400])
-    
-    if wal == 5:
-        walls.append([800,0])
-        walls.append([800,100])
-        walls.append([800,200])
-        walls.append([800,300])
- 
-    # 벽 3 
-    if wal == 6:
-        walls.append([800,0])
-        walls.append([800,100])
-        walls.append([800,200])
-        
-    
-    if wal == 7:
-        walls.append([800,0])
-        walls.append([800,100])
-        
-        
-        walls.append([800,400])
-
-    if wal == 8:
-        walls.append([800,0])
-        
-        
-        walls.append([800,300])
-        walls.append([800,400])
-    
-    if wal == 9:
-        
-        
-        walls.append([800,200])
-        walls.append([800,300])
-        walls.append([800,400])
+        if stage_choice == 1:
+            if wal == 1:
+                walls.append([800,0])
+                walls.append([800,100])
+                walls.append([800,200])
+            if wal == 2:
+                walls.append([800,0])
+                walls.append([800,100])
+                walls.append([800,400])
+            if wal == 3:
+                walls.append([800,0])
+                walls.append([800,300])
+                walls.append([800,400])
+            if wal == 4:
+                walls.append([800,200])
+                walls.append([800,300])
+                walls.append([800,400])
+            if wal == 5:
+                walls.append([800,0])
+                walls.append([800,200])
+                walls.append([800,400])
+                
+        if stage_choice == 2:
+            if wal == 1:
+                walls.append([800,100])
+                walls.append([800,200])
+                walls.append([800,300])
+                walls.append([800,400])
+            if wal == 2:
+                walls.append([800,0])
+                walls.append([800,200])
+                walls.append([800,300])
+                walls.append([800,400])
+            if wal == 3:
+                walls.append([800,0])
+                walls.append([800,100])
+                walls.append([800,300])
+                walls.append([800,400])
+            if wal == 4:
+                walls.append([800,0])
+                walls.append([800,100])
+                walls.append([800,200])
+                walls.append([800,400])
+            if wal == 5:
+                walls.append([800,0])
+                walls.append([800,100])
+                walls.append([800,200])
+                walls.append([800,300])
+                
+        if stage_choice == 3:
+            if wal == 1:
+                walls.append([800,0])
+                walls.append([800,100]) 
+                walls.append([800,400])
+            if wal == 2:
+                walls.append([800,0])
+                walls.append([800,300])
+                walls.append([800,400])
 # 메인 함수
+
 def main():
     # 파이게임 기본 정의
     pygame.init()
@@ -86,7 +82,7 @@ def main():
     pygame.display.set_caption("run")
     
     # 바탕하면
-    background = pygame.image.load("background.png")
+    background = pygame.image.load("wall_red.png")
     
     # 플레이어 
     player = pygame.image.load("player.png")
@@ -106,8 +102,10 @@ def main():
     wall_height = wall_size[1]
     walls = []
     wall_time = 0
-    x = random.randint(1,6)
-    wallss(x,walls)
+    
+    s_c = 0
+    stage_choice = random.randint(1,2)
+    make = make_wal()
     
     # 점수
     font = pygame.font.SysFont("malgungothic",50)
@@ -139,11 +137,12 @@ def main():
         player_rect.left = player_x_pos
         player_rect.top = player_y_pos
             
-            
         # 점프         
         if space == True:
+            player = pygame.image.load("player_up.png")
             player_y_pos += to_y
         else :
+            player = pygame.image.load("player.png")
             player_y_pos += 3 
             
         # 플레이어 높이 제한    
@@ -155,13 +154,25 @@ def main():
             running = False             
             
         # 벽 위치 정의
-        if wall_time > 150:
-            x = random.randint(1,9)
-            wallss(x,walls)
+        if wall_time > 150 and s_c < 30:
+            s_c += 1
+            wal = random.randint(1,5)
+            make.stage(wal,walls,stage_choice)
+            if s_c == 10 or s_c == 20:
+                stage_choice = random.randint(1,2)
             p += 1
-            point = font.render("점수 :" + str(p),True,(255,255,255))
+            wall_time = 0
+        
+        if wall_time > 30 and s_c >= 30:
+            if s_c == 30:
+                wall =  pygame.image.load("wall_star.png")
+            s_c += 1
+            wal = random.randint(1,2)
+            make.stage(wal,walls,3)
+            p += 1
             wall_time = 0
             
+    
         walls = [ [w[0] - 5, w[1]] for w in walls if w[0] > 0] # 벽을 왼쪽으로 이동
         
         # 벽의 충돌 정의 
@@ -177,7 +188,9 @@ def main():
             if wall_rect.colliderect(player_rect):
                 walls.pop(wall_idx)
                 print("게임 오버23")
-                
+        # 점수 
+        point = font.render("점수 :" + str(p),True,(255,255,255))
+        
         for i in range(2):
             screen.blit(background,(0+(i*500),0))
             
@@ -191,13 +204,14 @@ def main():
             
     pygame.quit()
     return p 
+
 def run_menu(p):
     pygame.init()
     screen_width = 1000
     screen_height = 500
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("run_menu")
-    background = pygame.image.load("background.png")
+    background = pygame.image.load("wall_red.png")
     
     font = pygame.font.SysFont("malgungothic",50)
     point = font.render("점수:" + str(p),True,(255,255,255))
@@ -223,11 +237,4 @@ def run_menu(p):
 r_running = True
 while r_running:
     p = main()
-    r_running = run_menu(p)    
-    
-    
-    
-    
-    
-    
-    
+    r_running = run_menu(p)
