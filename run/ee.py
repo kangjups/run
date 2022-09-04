@@ -9,8 +9,10 @@ import pygame
 import random
 
 class wallc:
-    def __init__(self,img,hp):
+    def __init__(self,img,img2,hp):
         self.wall =  pygame.image.load(img)
+        self.star = pygame.image.load(img2)
+        self.ab = self.wall
         self.hp = hp
         self.walls = []
         self.speed = 5
@@ -20,9 +22,11 @@ class wallc:
         self.width = self.size[0]
         self.height = self.size[1]
         self.wall_time = 0
+        self.stage_choice = 1
         
-    def create(self,stage_choice):
-        if stage_choice == 1:
+    def create(self):
+        if self.stage_choice == 1:
+            self.wall = self.ab 
             wal = random.randint(1,4)
             if wal == 1:
                 self.walls.append([self.start,0])
@@ -41,7 +45,7 @@ class wallc:
                 self.walls.append([self.start,300])
                 self.walls.append([self.start,400])
                 
-        if stage_choice == 2:
+        if self.stage_choice == 2:
             wal = random.randint(1,5)
             if wal == 1:
                 self.walls.append([self.start,100])
@@ -69,7 +73,8 @@ class wallc:
                 self.walls.append([self.start,200])
                 self.walls.append([self.start,300])
                 
-        if stage_choice == 3:
+        if self.stage_choice == 3:
+            self.wal = self.star
             wal = random.randint(1,2)
             if wal == 1:
                 self.walls.append([self.start,0])
@@ -104,6 +109,10 @@ class wallc:
         self.speed = s
                 
     def display(self, screen):
+        if self.stage_choice == 3:
+            self.wall = self.star
+        else :
+            self.wall = self.ab
         for wall_x_pos, wall_y_pos in self.walls:
             screen.blit(self.wall, (wall_x_pos, wall_y_pos))
             
@@ -131,6 +140,7 @@ def main(hp):
     player_y_pos = 100
     to_y = 0
     
+    # 점프
     space = False
     space_sound = pygame.mixer.Sound("jump.wav")
     space_sound.set_volume(0.4)
@@ -140,7 +150,7 @@ def main(hp):
     door_x = 150
     
     # 벽
-    wall =  wallc("wall.png",hp)
+    wall =  wallc("wall.png","wall_star.png",hp)
     
     # 점수
     font = pygame.font.SysFont("malgungothic",30)
@@ -152,6 +162,10 @@ def main(hp):
     heart_x = 17
     heart_point = font.render(str(hp),True,(255,255,255))
     heart_time = 0
+    
+    # 스테이지
+    stage = 0
+    stage_choice = 1
     
     clock = pygame.time.Clock() 
     running = True
@@ -196,29 +210,16 @@ def main(hp):
             
         # 벽 위치 정의
         if wall.wall_time > 150:
-            stage_choice = random.randint(1,2)
-            wall.create(3)
+            p += 1
+            stage += 1
+            if stage == 3:
+                wall.stage_choice += 1
+                stage = 0
+                if wall.stage_choice >= 4:
+                    wall.stage_choice = 1
+            wall.create()
             wall.wall_time = 0
             
-        """
-        if wall_time > 150 and s_c < 30:
-            s_c += 1
-            make.stage(walls,stage_choice)
-            if s_c == 10 or s_c == 20:
-                stage_choice = random.randint(1,2)
-            p += 1
-            wall_time = 0
-        
-        if wall_time > 30 and s_c >= 30:
-            if s_c == 30:
-                wall =  pygame.image.load("wall_star.png")
-            s_c += 1
-            make.stage(walls,3)
-            p += 1
-            wall_time = 0
-        
-        """
-        
         wall.move()
         
         wall.collision(player_rect)
@@ -288,7 +289,7 @@ def run_menu(p):
          
     pygame.quit()
     
-h = 100    
+h = 100
 r_running = True
 while r_running:
     p = main(h)
