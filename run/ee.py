@@ -219,9 +219,9 @@ def main(hp):
                     wall.stage_choice = 1
             wall.create()
             wall.wall_time = 0
-            
-        wall.move()
         
+        # 벽 움직임 , 벽 충돌 
+        wall.move()
         wall.collision(player_rect)
         
         # 문 위치 변화
@@ -231,6 +231,7 @@ def main(hp):
         point = font.render("점수 :" + str(p),True,(255,255,255))
         heart_point = font.render(str(wall.hp),True,(255,255,255))
         
+        # hp 값에 따른 위치 변화
         if heart_time >= 50:
             wall.hp -= 1
             if wall.hp <= 99:
