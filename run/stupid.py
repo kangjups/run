@@ -359,9 +359,9 @@ def menu(p):
                         x = xs[x]
                     if x_p > 200 and x_p < 300 and y_p > 450 and y_p < 500:
                         x += 1
-                        x = xs[x]
                         if x >= 3:
                             x = 0
+                        x = xs[x]
                     if x_p > 550 and x_p < 650 and y_p > 400 and y_p < 500:
                         pygame.quit()
                         return True ,x
