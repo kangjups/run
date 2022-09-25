@@ -329,7 +329,10 @@ def englishs():
           del english[x]
       else :
           print(korea[x],":",english[x])
+          
       if len(korea) == 0:
+          break
+      if y == 'break':
           break
       
 def menu(p):
