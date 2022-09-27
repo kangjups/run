@@ -357,20 +357,20 @@ def menu(p):
             if event.type == pygame.MOUSEBUTTONDOWN: # 마우스의 어떤 버튼을 눌렀을때
                 if event.button == 1:  # 마우스 왼쪽 클릭시
                     x_p, y_p = pygame.mouse.get_pos()    
-                    if x_p > 200 and x_p < 300 and y_p > 0 and y_p < 50:
+                    if x_p > 50 and x_p < 120 and y_p > 290 and y_p < 390:
                         x -= 1
                         x = xs[x]
-                    if x_p > 200 and x_p < 300 and y_p > 450 and y_p < 500:
+                    if x_p > 330 and x_p < 400 and y_p > 290 and y_p < 390:
                         x += 1
                         if x >= 3:
                             x = 0
                         x = xs[x]
-                    if x_p > 550 and x_p < 650 and y_p > 400 and y_p < 500:
+                    if x_p > 190 and x_p < 260 and y_p > 290 and y_p < 390:
                         pygame.quit()
                         return True ,x
-                    if x_p > 850 and x_p < 950 and y_p > 400 and y_p < 500:
-                        pygame.quit()
-                        return False ,x
+                    #if x_p > 850 and x_p < 950 and y_p > 400 and y_p < 500:
+                     #   pygame.quit()
+                      #  return False ,x
                     
             if event.type == pygame.MOUSEBUTTONUP:
                 pass
@@ -382,7 +382,7 @@ def menu(p):
             card = pygame.image.load("card_e.png")
             
         screen.blit(background,(0,0))
-        screen.blit(card,(150,100))
+        screen.blit(card,(50,40))
         screen.blit(point,(800,10))
         pygame.display.update()
          
