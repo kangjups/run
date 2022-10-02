@@ -8,110 +8,70 @@ Created on Thu Aug 25 19:06:18 2022
 import pygame
 import random
 
+#trees = ["tree.png",5,30,400]
+#walls = ["wall.png",5,30,100]
+
+# 이미지, 속도, 데미지, 위치
+
+#stage1 = [trees ]
 
 class wallc:
-    def __init__(self,img,hp):
-        self.wall =  pygame.image.load(img)
+    def __init__(self,hp):
+        #self.img = pygame.image.load(img)
         self.hp = hp
         self.walls = []
-        self.speed = 5
+        self.trees =  ["tree.png",5,30,300]
+        self.bird = ["bird.png",7,10,0]
+        self.bird1 = ["bird.png",7,10,100]
+        self.bird2 = ["bird.png",7,10,200]
+        self.bird3 = ["bird.png",7,10,300]
+        self.stage = [self.bird,self.bird1,self.bird3,self.trees,self.bird2,self.trees,self.trees]
         self.start = 800
         self.gap = 100
-        self.size = self.wall.get_rect().size
-        self.width = self.size[0]
-        self.height = self.size[1]
-        self.wall_time = 0
-        self.stage_choice = 1
+        self.wall_time = True
+        self.i = 0
         
     def create(self):
-        if self.stage_choice == 1:
-            wal = random.randint(1,4)
-            if wal == 1:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,100])
-                self.walls.append([self.start,200])
-            if wal == 2:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,100])
-                self.walls.append([self.start,400])
-            if wal == 3:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,300])
-                self.walls.append([self.start,400])
-            if wal == 4:
-                self.walls.append([self.start,200])
-                self.walls.append([self.start,300])
-                self.walls.append([self.start,400])
-                
-        if self.stage_choice == 2:
-            wal = random.randint(1,5)
-            if wal == 1:
-                self.walls.append([self.start,100])
-                self.walls.append([self.start,200])
-                self.walls.append([self.start,300])
-                self.walls.append([self.start,400])
-            if wal == 2:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,200])
-                self.walls.append([self.start,300])
-                self.walls.append([self.start,400])
-            if wal == 3:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,100])
-                self.walls.append([self.start,300])
-                self.walls.append([self.start,400])
-            if wal == 4:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,100])
-                self.walls.append([self.start,200])
-                self.walls.append([self.start,400])
-            if wal == 5:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,100])
-                self.walls.append([self.start,200])
-                self.walls.append([self.start,300])
-                
-        if self.stage_choice == 3:
-            wal = random.randint(1,2)
-            if wal == 1:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,100]) 
-                self.walls.append([self.start,400])
-            if wal == 2:
-                self.walls.append([self.start,0])
-                self.walls.append([self.start,300])
-                self.walls.append([self.start,400])
         
-    def move(self, speed):
-        self.speed = speed
-        self.walls = [ [w[0] - self.speed, w[1]] for w in self.walls if w[0] > 0] # 벽을 왼쪽으로 이동
+        self.i += 1
+        if self.i >= len(self.stage):
+            self.i = 0
+            self.wall_time = False
+        self.img =  pygame.image.load(self.stage[self.i][0])
+        self.speed = self.stage[self.i][1]
+        
+        self.size = self.img.get_rect().size
+        self.width = self.size[0]
+        self.height = self.size[1]
+        
+        self.walls.append([self.start,self.stage[self.i][3]])
+
+    
     def move(self):
         self.walls = [ [w[0] - self.speed, w[1]] for w in self.walls if w[0] > 0] # 벽을 왼쪽으로 이동
+                
         
-    def collision(self, player_rect):
-        for wall_idx, wall_val in enumerate(self.walls):
-            wall_pos_x = wall_val[0]
-            wall_pos_y = wall_val[1]
+    def collision(self, arrow_rect):
+        for self.img_idx, self.img_val in enumerate(self.walls):
+            self.img_pos_x = self.img_val[0]
+            self.img_pos_y = self.img_val[1]
 
-            wall_rect = self.wall.get_rect()
-            wall_rect.left = wall_pos_x
-            wall_rect.top = wall_pos_y
+            self.img_rect = self.img.get_rect()
+            self.img_rect.left = self.img_pos_x
+            self.img_rect.top = self.img_pos_y
             
             # 벽과 플레이어의 충돌
-            if wall_rect.colliderect(player_rect):
-                self.walls.pop(wall_idx)
-                self.hp -= random.randint(18,28)
-            
-    def set_speed(self,s):
-        self.speed = s
-        
+            if self.img_rect.colliderect(arrow_rect):
+                self.walls.pop(self.img_idx)
+                self.hp -= self.stage[self.i][2]
+                
     def check(self):
-        #print ('walls count : ' + str(len(self.walls)))
         return len(self.walls)
            
     def display(self, screen):
-        for wall_x_pos, wall_y_pos in self.walls:
-            screen.blit(self.wall, (wall_x_pos, wall_y_pos))
+            
+        for self.img_x_pos, self.img_y_pos in self.walls:
+            screen.blit(self.img, (self.img_x_pos, self.img_y_pos))
 def window():
     pygame.init()
     screen_width = 1000
@@ -128,7 +88,8 @@ def window():
                 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    running = False
+                    pygame.quit()
+                    return True
                     
             if event.type == pygame.MOUSEMOTION:
                 pass
@@ -167,22 +128,34 @@ def main_0(hp):
     background_sound = pygame.mixer.Sound("rpg.mp3")
     background_sound.play(-1)
     
-    # 플레이어 
-    player = pygame.image.load("player.png")
-    player_size = player.get_rect().size
-    player_width = player_size[0]
-    player_height = player_size[1]
-    player_x_pos = 150
-    player_y_pos = 100
+    #arrow
+    arrow = pygame.image.load("arrow.png")
+    arrow_size = arrow.get_rect().size
+    arrow_width = arrow_size[0]
+    arrow_height = arrow_size[1]
+    arrow_y_pos = 290 
     to_y = 0
     
+    # 사냥꾼
+    player = pygame.image.load("player_main.png")
+    
+    # 박스
+    box = pygame.image.load("box.png")
+    
+    # 화살 세기 정하기
+    rulet = pygame.image.load("rulet.png")
+    rulet_ = pygame.image.load("rulet_.png")
+    rulet_x = 40
+    rul = True    
+    rulet_x_to = 5 
+    
     # 점프
-    space = False
+    space = True
     space_sound = pygame.mixer.Sound("jump.wav")
     space_sound.set_volume(0.4)
-    
+     
     # 벽
-    wall =  wallc("wall.png",hp)
+    wall =  wallc(hp)
     wall_list = []
     
     # 점수
@@ -196,22 +169,26 @@ def main_0(hp):
     heart_point = font.render(str(hp),True,(255,255,255))
     heart_time = 0
     
-    # 스테이지
-    stage = 0
-    stage_choice = 1
-    
     clock = pygame.time.Clock() 
     running = True
+    
     while running:
         clock.tick(60)
-        wall.wall_time += 1 
+        #wall.wall_time += 1 
         heart_time += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False 
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                
+                if event.key == pygame.K_SPACE and rul == True:
+                    rul = False
+                    if rulet_x >= 112 and rulet_x <= 120:
+                        wall.hp += 10
+                    if rulet_x >= 58 and rulet_x <= 75 or rulet_x >= 135 and rulet_x <= 150:
+                        wall.hp -= 10
+                if event.key == pygame.K_SPACE and rul == False:
                     space_sound.play()
                     to_y = - 5
                     space = True
@@ -222,52 +199,55 @@ def main_0(hp):
                     space = False
             
         # 플레이어 충돌 정의
-        player_rect = player.get_rect()
-        player_rect.left = player_x_pos
-        player_rect.top = player_y_pos
+        arrow_rect = arrow.get_rect()
+        arrow_rect.left = 160
+        arrow_rect.top = arrow_y_pos
             
         # 점프         
         if space == True:
-            player = pygame.image.load("player_up.png")
-            player_y_pos += to_y
+            arrow_y_pos += to_y
         else :
-            player = pygame.image.load("player.png")
-            player_y_pos += 3
+            arrow_y_pos += 3
             
         # 플레이어 높이 제한    
-        if player_y_pos <= 0:
-            player_y_pos = 0
+        if arrow_y_pos <= 0:
+            arrow_y_pos = 0
         
-        if player_y_pos >= 500:
+        if arrow_y_pos >= 470:
+            arrow_y_pos = 470
             running = False             
-            
+    
+        if rul == True :
+            rulet_x += rulet_x_to
+            if rulet_x >= 190 :
+                rulet_x_to = -5
+            if rulet_x <= 50:
+                rulet_x_to = 5
+
+                
         # 벽 위치 정의 ------------------- 벽 위치 정의
-        if wall.wall_time > 150:
+        
+        if wall.wall_time == True and rul == False:
             p += 1
-            stage += 1
-            wall =  wallc("wall.png",hp)
-            if stage == 3:
-                wall.stage_choice += 1
-                stage = 0
-                if wall.stage_choice >= 4:
-                    wall.stage_choice = 1
+            #wall =  wallc(hp)
             wall.create()
             wall_list.append(wall)
-            wall.wall_time = 0
-        
-        # 벽 움직임 , 벽 충돌 
+            wall.wall_time = False
+            
+         #벽 움직임 , 벽 충돌 
         for w in wall_list :
             w.move()
-            w.collision(player_rect)
+            w.collision(arrow_rect)
             if w.check() == 0 :
                 wall_list.remove(w)
-                
+                wall.wall_time = True
+               
         # 점수 그리고 hp
         point = font.render("점수 :" + str(p),True,(255,255,255))
         heart_point = font.render(str(wall.hp),True,(255,255,255))
         
         # hp 값에 따른 위치 변화
-        if heart_time >= 50:
+        if heart_time >= 50 and rul == False:
             wall.hp -= 1
             hp = wall.hp
             if wall.hp <= 99:
@@ -278,7 +258,7 @@ def main_0(hp):
             
         if wall.hp <= 0:
             running = False  
-        
+
         # 이미지 그리기
         screen.blit(background,(0,0))
             
@@ -286,8 +266,17 @@ def main_0(hp):
         screen.blit(point,(750,10)) 
         screen.blit(heart,(15,10))
         screen.blit(heart_point,(heart_x,24))
-        screen.blit(player,(player_x_pos,player_y_pos))
         
+        if rul == True:
+            for i in range(3):
+                for a in range(3-i):
+                    screen.blit(box,(a*50+50*i, 450 - i*50))
+        
+            screen.blit(rulet,(50,240))
+            screen.blit(rulet_,(rulet_x,256))
+            screen.blit(player,(110,280))
+        if rul == False:    
+            screen.blit(arrow,(160,arrow_y_pos))
         pygame.display.update()
             
     pygame.quit()
@@ -300,7 +289,9 @@ def main_1(h):
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("s")
     background = pygame.image.load("background_s.png")
+    bird = pygame.image.load("bird.png")
     p = 13
+    x = 100
     running = True
     while running:
         for event in pygame.event.get():
@@ -310,8 +301,9 @@ def main_1(h):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     running = False
-    
+        #x += 1
         screen.blit(background,(0,0))
+        screen.blit(bird,(x,100))
         pygame.display.update()
          
     pygame.quit()
@@ -352,6 +344,10 @@ def menu(p):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return False ,x
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    pygame.quit()
+                    return True ,x
             if event.type == pygame.MOUSEMOTION:
                 pass
             if event.type == pygame.MOUSEBUTTONDOWN: # 마우스의 어떤 버튼을 눌렀을때
