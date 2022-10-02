@@ -11,7 +11,7 @@ import random
 #trees = ["tree.png",5,30,400]
 #walls = ["wall.png",5,30,100]
 
-# 이미지, 속도, 데미지, 위치
+# 이미지0, 속도1, 데미지2, 개수3, 위치4
 
 #stage1 = [trees ]
 
@@ -20,36 +20,53 @@ class wallc:
         #self.img = pygame.image.load(img)
         self.hp = hp
         self.walls = []
-        self.trees =  ["tree.png",5,30,300]
-        self.bird = ["bird.png",7,10,0]
-        self.bird1 = ["bird.png",7,10,100]
-        self.bird2 = ["bird.png",7,10,200]
-        self.bird3 = ["bird.png",7,10,300]
+        self.start = 850
+        
+        self.trees =  ["tree.png",5,30,1,300]
+        
+        self.bird = ["bird.png",7,10,0,1]
+        self.bird1 = ["bird.png",7,10,1,100]
+        self.bird2 = ["bird.png",7,10,1,200]
+        self.bird3 = ["bird.png",7,10,1,300]
+        self.bird4 = ["bird.png",7,10,1,400]
+        self.bird134 = ["bird.png",7,10,3,100,300,400]
+        self.bird124 = ["bird.png",7,10,3,100,200,400]
+        
+        
         self.stage = [self.bird,self.bird1,self.bird3,self.trees,self.bird2,self.trees,self.trees]
-        self.start = 800
-        self.gap = 100
-        self.wall_time = True
+        self.stage2 = [self.trees,self.trees,self.trees]
+        self.stage3 = [self.bird134,self.bird124]
+        
         self.i = 0
+        self.stage_choice = 0
+    
+        self.stages = [self.stage,self.stage2,self.stage3,self.stage3,self.stage3]
+        self.stage = self.stages[self.stage_choice]
+        #self.gap = 100
+        self.wall_time = True
         
     def create(self):
         
-        self.i += 1
-        if self.i >= len(self.stage):
-            self.i = 0
-            self.wall_time = False
         self.img =  pygame.image.load(self.stage[self.i][0])
-        self.speed = self.stage[self.i][1]
+        self.speed = self.stage[self.i][1] 
+        self.damge = self.stage[self.i][2]
+        self.number = self.stage[self.i][3]
         
         self.size = self.img.get_rect().size
         self.width = self.size[0]
         self.height = self.size[1]
         
-        self.walls.append([self.start,self.stage[self.i][3]])
-
-    
+        for a in range(0,self.number):
+            self.walls.append([self.start,self.stage[self.i][4+a]])
+        
+        self.i += 1
+        if self.i >= len(self.stage):
+            self.i = 0
+            self.stage_choice += 1
+            self.stage = self.stages[self.stage_choice] 
+            
     def move(self):
         self.walls = [ [w[0] - self.speed, w[1]] for w in self.walls if w[0] > 0] # 벽을 왼쪽으로 이동
-                
         
     def collision(self, arrow_rect):
         for self.img_idx, self.img_val in enumerate(self.walls):
@@ -63,15 +80,15 @@ class wallc:
             # 벽과 플레이어의 충돌
             if self.img_rect.colliderect(arrow_rect):
                 self.walls.pop(self.img_idx)
-                self.hp -= self.stage[self.i][2]
+                self.hp -= self.damge
                 
     def check(self):
         return len(self.walls)
-           
+    
     def display(self, screen):
-            
         for self.img_x_pos, self.img_y_pos in self.walls:
             screen.blit(self.img, (self.img_x_pos, self.img_y_pos))
+            
 def window():
     pygame.init()
     screen_width = 1000
@@ -114,6 +131,7 @@ def window():
         return True  
     if x_p > 400 and x_p < 600 and y_p > 400 and y_p < 450:
         return False         
+    
 # 메인 함수
 def main_0(hp):
     # 파이게임 기본 정의
@@ -161,7 +179,8 @@ def main_0(hp):
     # 점수
     font = pygame.font.SysFont("malgungothic",30)
     p = 0
-    point = font.render("점수:" + str(p),True,(255,255,255))
+    point = font.render("점수 : " + str(p),True,(255,255,255))
+    stage_point = font.render("스테이지 : " + str(wall.stage_choice),True,(255,255,255))
     
     # 하트
     heart = pygame.image.load("heart.png")
@@ -243,8 +262,9 @@ def main_0(hp):
                 wall.wall_time = True
                
         # 점수 그리고 hp
-        point = font.render("점수 :" + str(p),True,(255,255,255))
+        point = font.render("점수 : " + str(p),True,(255,255,255))
         heart_point = font.render(str(wall.hp),True,(255,255,255))
+        stage_point = font.render("스테이지 : " + str(wall.stage_choice),True,(255,255,255))
         
         # hp 값에 따른 위치 변화
         if heart_time >= 50 and rul == False:
@@ -258,14 +278,15 @@ def main_0(hp):
             
         if wall.hp <= 0:
             running = False  
-
+           
         # 이미지 그리기
         screen.blit(background,(0,0))
             
         wall.display(screen) 
-        screen.blit(point,(750,10)) 
+        screen.blit(point,(850,10)) 
         screen.blit(heart,(15,10))
         screen.blit(heart_point,(heart_x,24))
+        screen.blit(stage_point,(650,10))
         
         if rul == True:
             for i in range(3):
@@ -383,13 +404,12 @@ def menu(p):
         pygame.display.update()
          
     pygame.quit()
-    
+
 running = window()
 h = 100
 p = 0
 while running:
     running ,x = menu(p)
-    print(x)
     if running == False:
         break
     if x == 0:
