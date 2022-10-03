@@ -21,10 +21,10 @@ class wallc:
         self.hp = hp
         self.walls = []
         self.start = 850
-        
+        self.p = 0
         self.trees =  ["tree.png",5,30,1,300]
         
-        self.bird = ["bird.png",7,10,0,1]
+        self.bird = ["bird.png",7,10,1,0]
         self.bird1 = ["bird.png",7,10,1,100]
         self.bird2 = ["bird.png",7,10,1,200]
         self.bird3 = ["bird.png",7,10,1,300]
@@ -40,7 +40,7 @@ class wallc:
         self.i = 0
         self.stage_choice = 0
     
-        self.stages = [self.stage,self.stage2,self.stage3,self.stage3,self.stage3]
+        self.stages = [self.stage,self.stage2,self.stage3]
         self.stage = self.stages[self.stage_choice]
         #self.gap = 100
         self.wall_time = True
@@ -51,26 +51,30 @@ class wallc:
         self.speed = self.stage[self.i][1] 
         self.damge = self.stage[self.i][2]
         self.number = self.stage[self.i][3]
-        
+    
         self.size = self.img.get_rect().size
         self.width = self.size[0]
         self.height = self.size[1]
         
-        for a in range(0,self.number):
-            self.walls.append([self.start,self.stage[self.i][4+a]])
-        
-        self.i += 1
-        if self.i >= len(self.stage):
-            self.i = 0
-            self.stage_choice += 1
-            self.stage = self.stages[self.stage_choice] 
-            
-    def check2(self):
-        if self.stage_choice >= len(self.stages)-1:
-            return False
+        # 스테이지의 리스트가 없을 때 스테이지 멈추기
+        if not (self.stage_choice >= len(self.stages)-1):
+            for a in range(0,self.number):
+                self.walls.append([self.start,self.stage[self.i][4+a]])
+            self.i += 1
+            self.p += 1
+            if self.i >= len(self.stage):
+                self.i = 0
+                self.stage_choice += 1
+                self.stage = self.stages[self.stage_choice] 
+                
+    #def check2(self):
+     #   if self.stage_choice >= len(self.stages)-1:
+      #      return False
         
     def move(self):
-        self.walls = [ [w[0] - self.speed, w[1]] for w in self.walls if w[0] > 0] # 벽을 왼쪽으로 이동
+        self.walls = [ [w[0] - self.speed, w[1]] for w in self.walls if w[0] > 0] # 벽을 왼쪽으로 
+            
+        
         
     def collision(self, arrow_rect):
         for self.img_idx, self.img_val in enumerate(self.walls):
@@ -182,8 +186,7 @@ def main0(hp):
     
     # 점수
     font = pygame.font.SysFont("malgungothic",30)
-    p = 0
-    point = font.render("점수 : " + str(p),True,(255,255,255))
+    point = font.render("점수 : " + str(wall.p),True,(255,255,255))
     stage_point = font.render("스테이지 : " + str(wall.stage_choice),True,(255,255,255))
     
     # 하트
@@ -251,12 +254,10 @@ def main0(hp):
         # 벽 위치 정의 ------------------- 벽 위치 정의
         
         if wall.wall_time == True and rul == False:
-            p += 1
             #wall =  wallc(hp)
             wall.create()
-            #wall.check2()
-            if wall.check2() == False:
-                running = False
+            #if wall.check2() == False:
+             #   running = False
         
             wall_list.append(wall)
             wall.wall_time = False
@@ -266,11 +267,11 @@ def main0(hp):
             w.move()
             w.collision(arrow_rect)
             if w.check() == 0 :
-                wall_list.remove(w)
+                wall_list.remove(w) 
                 wall.wall_time = True
                
         # 점수 그리고 hp
-        point = font.render("점수 : " + str(p),True,(255,255,255))
+        point = font.render("점수 : " + str(wall.p),True,(255,255,255))
         heart_point = font.render(str(wall.hp),True,(255,255,255))
         stage_point = font.render("스테이지 : " + str(wall.stage_choice),True,(255,255,255))
         
@@ -309,9 +310,10 @@ def main0(hp):
         if rul == False:    
             screen.blit(arrow,(160,arrow_y_pos))
         pygame.display.update()
-            
+    
+    pygame.time.delay(2000)        
     pygame.quit()
-    return p, wall.stage_choice 
+    return wall.p, wall.stage_choice 
 
 def main1(h):
     pygame.init()
@@ -769,6 +771,7 @@ def main2():
   print("당신의 피한 운석 수는", ":",jumsu,"입니다")
   pygame.time.delay(4000)
   pygame.quit()
+  
   
 def main3():
     #'O'와 'X'를 좀더 이해하기 쉽게 PLAYER_STONE과 COMPUTER_STONE 변수에 넣어 사용함
