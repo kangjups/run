@@ -65,6 +65,10 @@ class wallc:
             self.stage_choice += 1
             self.stage = self.stages[self.stage_choice] 
             
+    def check2(self):
+        if self.stage_choice >= len(self.stages)-1:
+            return False
+        
     def move(self):
         self.walls = [ [w[0] - self.speed, w[1]] for w in self.walls if w[0] > 0] # 벽을 왼쪽으로 이동
         
@@ -250,6 +254,10 @@ def main0(hp):
             p += 1
             #wall =  wallc(hp)
             wall.create()
+            #wall.check2()
+            if wall.check2() == False:
+                running = False
+        
             wall_list.append(wall)
             wall.wall_time = False
             
@@ -278,7 +286,8 @@ def main0(hp):
             
         if wall.hp <= 0:
             running = False  
-           
+        #if wall.create() == 1:
+         #   running = False
         # 이미지 그리기
         screen.blit(background,(0,0))
             
@@ -1024,24 +1033,27 @@ def menu(p,stage):
          
     pygame.quit()
 
-running = window()
-h = 100
-p = 0
-stage = 0
-while running:
-    running ,x = menu(p,stage)
-    if running == False:
-        break
-    if x == 0:
-        p,stage = main0(h)
-    if x == 1:
-        p = main1(h)
-    if x == 2:
-        main2()
-    if x == 3:
-        main3()
-    if x == 4:
-        englishs()
-        
+# 시작점
+if __name__ == "__main__":
+    running = window()
+    h = 100
+    p = 0
+    stage = 0
+    while running:
+        running ,x = menu(p,stage)
+        if running == False:
+            break
+        if x == 0:
+            p,stage = main0(h)
+        if x == 1:
+            p = main1(h)
+        if x == 2:
+            main2()
+        if x == 3:
+            main3()
+        if x == 4:
+            englishs()
+
+
         
         
